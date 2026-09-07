@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #0f1419;
+  color: #ffffff;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a2332;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #00ff88;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #00ff99;
+}
+
+/* Button styles */
+.btn-primary {
+  @apply px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors;
+}
+
+.btn-secondary {
+  @apply px-6 py-3 bg-gray-700 text-white font-semibold rounded-lg hover:bg-gray-600 transition-colors;
+}
+
+.btn-small {
+  @apply px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition-colors text-sm;
+}
+
+/* Card styles */
+.card {
+  @apply bg-gradient-to-br from-gray-900 to-gray-800 rounded-lg p-6 border border-gray-700;
+}
+
+.card-hover {
+  @apply card hover:border-green-500 hover:shadow-lg hover:shadow-green-500/20 transition-all cursor-pointer;
+}
