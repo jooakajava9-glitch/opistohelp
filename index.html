@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpistoHelp - Siistimpi arkea yhdessä</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <div class="logo">
+                    <h1>OpistoHelp</h1>
+                    <p class="tagline">Siistimpi arkea yhdessä</p>
+                </div>
+                <ul class="nav-menu">
+                    <li><a href="#" onclick="showPage('home')" class="nav-link active">🏠 Etusivu</a></li>
+                    <li><a href="#" onclick="showPage('dorms')" class="nav-link">🏢 Asuntolat</a></li>
+                    <li><a href="#" onclick="showPage('tasks')" class="nav-link">🛠️ Tehtävät</a></li>
+                    <li><a href="#" onclick="showPage('notifications')" class="nav-link">📢 Ilmoitukset</a></li>
+                    <li><a href="#" onclick="showPage('events')" class="nav-link">📅 Tapahtumat</a></li>
+                    <li><a href="#" onclick="showPage('profile')" class="nav-link">👤 Profiili</a></li>
+                    <li><a href="#" onclick="adminPanel()" class="nav-link admin-link">⚙️ Admin</a></li>
+                    <li><a href="#" onclick="logout()" class="nav-link logout">Kirjaudu ulos</a></li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Home Page -->
+            <div id="home-page" class="page active">
+                <div class="hero-section">
+                    <h2>Tervetuloa OpistoHelpiin! 👋</h2>
+                    <p id="user-greeting"></p>
+                </div>
+
+                <!-- User Balance Card -->
+                <div class="card balance-card">
+                    <div class="card-icon">💰</div>
+                    <div class="card-content">
+                        <h3>Saldo</h3>
+                        <p class="balance-amount" id="user-balance">0.00 €</p>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <span class="stat-icon">🎯</span>
+                        <h4>Varatut tehtävät</h4>
+                        <p id="booked-tasks-count">0</p>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-icon">✅</span>
+                        <h4>Tehdyt tehtävät</h4>
+                        <p id="completed-tasks-count">0</p>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-icon">⭐</span>
+                        <h4>Arvosana</h4>
+                        <p id="user-rating">4.5 / 5</p>
+                    </div>
+                    <div class="stat-box">
+                        <span class="stat-icon">🎉</span>
+                        <h4>Tapahtumat</h4>
+                        <p id="upcoming-events-count">0</p>
+                    </div>
+                </div>
+
+                <!-- Latest Announcements -->
+                <section class="section">
+                    <div class="section-header">
+                        <h3>📢 Uusimmat ilmoitukset</h3>
+                        <a href="#" onclick="showPage('notifications')">Näytä kaikki →</a>
+                    </div>
+                    <div id="latest-announcements" class="announcements-list"></div>
+                </section>
+
+                <!-- Latest Tasks -->
+                <section class="section">
+                    <div class="section-header">
+                        <h3>🛠️ Uusimmat tehtävät</h3>
+                        <a href="#" onclick="showPage('tasks')">Näytä kaikki →</a>
+                    </div>
+                    <div id="latest-tasks" class="tasks-list"></div>
+                </section>
+
+                <!-- Upcoming Events -->
+                <section class="section">
+                    <div class="section-header">
+                        <h3>📅 Tulevat tapahtumat</h3>
+                        <a href="#" onclick="showPage('events')">Näytä kaikki →</a>
+                    </div>
+                    <div id="upcoming-events" class="events-list"></div>
+                </section>
+
+                <!-- Dorms Map -->
+                <section class="section">
+                    <h3>🗺️ Reisjärven opiston kartta</h3>
+                    <div class="map-container">
+                        <div class="map-placeholder">
+                            <p>Klikkaa asuntolaa nähdäksesi lisätietoja</p>
+                            <div id="dorms-map" class="dorms-map"></div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Dorms Page -->
+            <div id="dorms-page" class="page">
+                <h2>🏢 Asuntolat</h2>
+                <div id="dorms-container" class="dorms-grid"></div>
+                <div id="dorm-detail" class="dorm-detail-modal" style="display: none;">
+                    <div class="modal-content">
+                        <button class="close-btn" onclick="closeDormDetail()">✕</button>
+                        <div id="dorm-detail-content"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tasks Page -->
+            <div id="tasks-page" class="page">
+                <h2>🛠️ Tehtävät</h2>
+                <div class="tasks-controls">
+                    <input type="text" id="task-search" placeholder="Hae tehtävää..." class="search-input">
+                    <button class="btn btn-primary" onclick="showTaskForm()">+ Uusi tehtävä</button>
+                </div>
+                <div class="filters">
+                    <select id="task-filter-status" onchange="filterTasks()">
+                        <option value="">Kaikki tehtävät</option>
+                        <option value="available">Vapaat</option>
+                        <option value="booked">Varatut</option>
+                        <option value="completed">Tehdyt</option>
+                    </select>
+                    <select id="task-filter-dorm" onchange="filterTasks()">
+                        <option value="">Kaikki asuntolat</option>
+                    </select>
+                    <select id="task-filter-price" onchange="filterTasks()">
+                        <option value="">Kaikki hinnat</option>
+                        <option value="0-5">0-5 €</option>
+                        <option value="5-10">5-10 €</option>
+                        <option value="10-20">10-20 €</option>
+                    </select>
+                </div>
+                <div id="tasks-container" class="tasks-list"></div>
+                <div id="task-form" class="task-form-modal" style="display: none;">
+                    <div class="modal-content">
+                        <button class="close-btn" onclick="closeTaskForm()">✕</button>
+                        <h3>Luo uusi tehtävä</h3>
+                        <form onsubmit="createTask(event)">
+                            <input type="text" id="task-name" placeholder="Tehtävän nimi" required>
+                            <textarea id="task-description" placeholder="Kuvaus" required></textarea>
+                            <select id="task-dorm" required></select>
+                            <input type="text" id="task-room" placeholder="Huone" required>
+                            <input type="number" id="task-price" placeholder="Hinta (€)" step="0.01" required>
+                            <input type="datetime-local" id="task-deadline" required>
+                            <button type="submit" class="btn btn-primary">Luo tehtävä</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Page -->
+            <div id="notifications-page" class="page">
+                <h2>📢 Ilmoitukset</h2>
+                <div id="notifications-container" class="notifications-list"></div>
+            </div>
+
+            <!-- Events Page -->
+            <div id="events-page" class="page">
+                <h2>📅 Tapahtumat</h2>
+                <button class="btn btn-primary" onclick="showEventForm()">+ Uusi tapahtuma</button>
+                <div id="events-container" class="events-list"></div>
+                <div id="event-form" class="event-form-modal" style="display: none;">
+                    <div class="modal-content">
+                        <button class="close-btn" onclick="closeEventForm()">✕</button>
+                        <h3>Luo uusi tapahtuma</h3>
+                        <form onsubmit="createEvent(event)">
+                            <input type="text" id="event-name" placeholder="Tapahtuman nimi" required>
+                            <textarea id="event-description" placeholder="Kuvaus" required></textarea>
+                            <input type="text" id="event-location" placeholder="Paikka" required>
+                            <input type="datetime-local" id="event-datetime" required>
+                            <button type="submit" class="btn btn-primary">Luo tapahtuma</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="page">
+                <h2>👤 Oma profiili</h2>
+                <div class="profile-container">
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="profile-avatar">👤</div>
+                        <div class="profile-info">
+                            <h3 id="profile-name"></h3>
+                            <p id="profile-email"></p>
+                            <div class="profile-stats">
+                                <span id="profile-rating">⭐ 4.5 / 5</span>
+                                <span id="profile-balance">💰 0 €</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-details">
+                        <h4>Tilastot</h4>
+                        <div class="profile-grid">
+                            <div class="profile-stat">
+                                <span>Tehdyt tehtävät</span>
+                                <p id="profile-completed">0</p>
+                            </div>
+                            <div class="profile-stat">
+                                <span>Ansaittu</span>
+                                <p id="profile-earned">0 €</p>
+                            </div>
+                            <div class="profile-stat">
+                                <span>Varatut tehtävät</span>
+                                <p id="profile-booked">0</p>
+                            </div>
+                            <div class="profile-stat">
+                                <span>Osallistuneet tapahtumat</span>
+                                <p id="profile-events">0</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn btn-secondary" onclick="editProfile()">Muokkaa profiilia</button>
+                        <button class="btn btn-danger" onclick="logout()">Kirjaudu ulos</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Panel -->
+            <div id="admin-page" class="page">
+                <h2>⚙️ Ylläpitäjän paneeli</h2>
+                <div class="admin-tabs">
+                    <button class="admin-tab active" onclick="switchAdminTab('users')">👥 Käyttäjät</button>
+                    <button class="admin-tab" onclick="switchAdminTab('dorms-admin')">🏢 Asuntolat</button>
+                    <button class="admin-tab" onclick="switchAdminTab('tasks-admin')">🛠️ Tehtävät</button>
+                    <button class="admin-tab" onclick="switchAdminTab('announcements-admin')">📢 Ilmoitukset</button>
+                    <button class="admin-tab" onclick="switchAdminTab('statistics')">📊 Tilastot</button>
+                </div>
+                <div id="admin-users" class="admin-content">
+                    <h3>Käyttäjien hallinta</h3>
+                    <div id="users-list-admin"></div>
+                </div>
+                <div id="admin-dorms-admin" class="admin-content" style="display: none;">
+                    <h3>Asuntoloiden hallinta</h3>
+                    <button class="btn btn-primary" onclick="showAddDormForm()">+ Lisää asuntola</button>
+                    <div id="dorms-list-admin"></div>
+                </div>
+                <div id="admin-tasks-admin" class="admin-content" style="display: none;">
+                    <h3>Tehtävien moderaatio</h3>
+                    <div id="tasks-list-admin"></div>
+                </div>
+                <div id="admin-announcements-admin" class="admin-content" style="display: none;">
+                    <h3>Ilmoituksien hallinta</h3>
+                    <button class="btn btn-primary" onclick="showAddAnnouncementForm()">+ Lisää ilmoitus</button>
+                    <div id="announcements-list-admin"></div>
+                </div>
+                <div id="admin-statistics" class="admin-content" style="display: none;">
+                    <h3>Tilastot</h3>
+                    <div id="statistics-container"></div>
+                </div>
+            </div>
+
+            <!-- Login/Register Page -->
+            <div id="login-page" class="page auth-page">
+                <div class="auth-container">
+                    <div class="auth-box">
+                        <h1>OpistoHelp</h1>
+                        <p class="tagline">Siistimpi arkea yhdessä</p>
+                        
+                        <div id="login-form-content">
+                            <h2>Kirjaudu sisään</h2>
+                            <form onsubmit="handleLogin(event)">
+                                <input type="email" id="login-email" placeholder="Sähköposti" required>
+                                <input type="password" id="login-password" placeholder="Salasana" required>
+                                <button type="submit" class="btn btn-primary btn-large">Kirjaudu</button>
+                            </form>
+                            <p class="auth-toggle">Etkö ole vielä rekisteröitynyt? <a href="#" onclick="toggleAuthMode()">Rekisteröidy</a></p>
+                        </div>
+
+                        <div id="register-form-content" style="display: none;">
+                            <h2>Rekisteröidy</h2>
+                            <form onsubmit="handleRegister(event)">
+                                <input type="text" id="register-name" placeholder="Nimi" required>
+                                <input type="email" id="register-email" placeholder="Sähköposti" required>
+                                <input type="password" id="register-password" placeholder="Salasana" required>
+                                <input type="password" id="register-password-confirm" placeholder="Vahvista salasana" required>
+                                <button type="submit" class="btn btn-primary btn-large">Rekisteröidy</button>
+                            </form>
+                            <p class="auth-toggle">Onko sinulla jo tili? <a href="#" onclick="toggleAuthMode()">Kirjaudu</a></p>
+                        </div>
+
+                        <!-- Demo User Login -->
+                        <div class="demo-section">
+                            <p>tai käytä demo-tiliä:</p>
+                            <button type="button" class="btn btn-secondary" onclick="demoLogin('student')">Demo - Opiskelija</button>
+                            <button type="button" class="btn btn-secondary" onclick="demoLogin('admin')">Demo - Admin</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="data.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
